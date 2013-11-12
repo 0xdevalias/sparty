@@ -54,17 +54,17 @@ Please take this into consideration:
 --------------------------
 
 	---------------------------------------------------------------
-                                                                 
-          _|_|_|    _|_|_|     _|_|    _|_|_|    _|_|_|_|_|  _|      _|  
-         _|        _|    _|  _|    _|  _|    _|      _|        _|  _|    
-           _|_|    _|_|_|    _|_|_|_|  _|_|_|        _|          _|      
-               _|  _|        _|    _|  _|    _|      _|          _|      
-         _|_|_|    _|        _|    _|  _|    _|      _|          _|      
+
+          _|_|_|    _|_|_|     _|_|    _|_|_|    _|_|_|_|_|  _|      _|
+         _|        _|    _|  _|    _|  _|    _|      _|        _|  _|
+           _|_|    _|_|_|    _|_|_|_|  _|_|_|        _|          _|
+               _|  _|        _|    _|  _|    _|      _|          _|
+         _|_|_|    _|        _|    _|  _|    _|      _|          _|
 
         SPARTY : Sharepoint/Frontpage Security Auditing Tool!
         Authored by: Aditya K Sood |{0kn0ck}@secniche.org  | 2013
         Twitter:     @AdityaKSood
-        
+
 	--------------------------------------------------------------
 Usage: sparty.py [options]
 
@@ -105,6 +105,12 @@ Options:
     -i SERVICES, --services=SERVICES
                         SERVICES = <serv | services> -- checking exposed
                         services !
+                     services !
+
+  Authentication [devalias.net]:
+    -a AUTHENTICATION, --auth-type=AUTHENTICATION
+                        AUTHENTICATION = <ntlm> -- Authenticate with NTLM
+                        user/pass !
 
   General::
     -x EXAMPLES, --examples=EXAMPLES
