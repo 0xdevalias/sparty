@@ -510,7 +510,50 @@ def file_upload_check(name):
                         print "[-] server responds with bad status !"
                         pass
 
+# devalias.net - Authentication
+def enable_ntlm_authentication(user = "", password = "", url = ""):
+    print "[+][devalias.net] Enabling NTLM authentication support"
+    # Import ntlm library
+    try:
+        # import ntlm
+        from ntlm import HTTPNtlmAuthHandler
+        print "[+][devalias.net][NTLM Authentication] NTLM Support Library Loaded!"
+    except ImportError:
+        print "[-][devalias.net][NTLM Authentication] Program could not find module : ntlm (Is the ntlm library installed/available locally?"
+        sys.exit (1)
 
+    try:
+        from urlparse import urlparse, urlunparse
+    except ImportError:
+        print "[-][devalias.net][NTLM Authentication] Program could not find module : urlparse"
+        sys.exit (1)
+
+    if user == "":
+        user = raw_input("[+][devalias.net][NTLM Authentication] Enter username (DOMAIN\username): ")
+    if password == "":
+        password = raw_input("[+][devalias.net][NTLM Authentication] Enter password: ")
+
+    parsed_url = urlparse(url)
+    base_uri = urlunparse((parsed_url[0],parsed_url[1],"","","",""))
+
+    passman = urllib2.HTTPPasswordMgrWithDefaultRealm()
+    passman.add_password(None, base_uri, user, password)
+    # create the NTLM authentication handler
+    auth_NTLM = HTTPNtlmAuthHandler.HTTPNtlmAuthHandler(passman)
+
+    # other authentication handlers
+    auth_basic = urllib2.HTTPBasicAuthHandler(passman)
+    auth_digest = urllib2.HTTPDigestAuthHandler(passman)
+
+    # disable proxies (if you want to stay within the corporate network)
+    # proxy_handler = urllib2.ProxyHandler({})
+    proxy_handler = urllib2.ProxyHandler()
+
+    # create and install the opener
+    opener = urllib2.build_opener(proxy_handler, auth_NTLM, auth_digest, auth_basic)
+    urllib2.install_opener(opener)
+
+    print "[+][devalias.net][NTLM authentication] Credentials enabled for " + user
 
 # main routine to trigger sub routines (functions) !
 
@@ -519,10 +562,12 @@ def main():
     banner()
 
     parser = optparse.OptionParser(usage="usage: %prog [options]", version="%prog 1.0")
+
     front_page = optparse.OptionGroup(parser,"Frontpage:")
     share_point = optparse.OptionGroup(parser,"Sharepoint:")
     mandatory = optparse.OptionGroup(parser,"Mandatory:")
     exploit = optparse.OptionGroup(parser,"Information Gathering and Exploit:")
+    authentication = optparse.OptionGroup(parser,"Authentication [devalias.net]")
     general = optparse.OptionGroup(parser,"General:")
 
     mandatory.add_option("-u","--url", type="string" , help="target url to scan with proper structure", dest="url")
@@ -534,18 +579,28 @@ def main():
     exploit.add_option("-l","--list", type="choice", choices=['list','index'], help="<DIRECTORY = list | index> -- check directory listing and permissions!", dest="directory")
     exploit.add_option("-e","--exploit", type="choice", choices=['rpc_version_check','rpc_service_listing', 'author_config_check','rpc_file_upload','author_remove_folder'], help="EXPLOIT = <rpc_version_check | rpc_service_listing | rpc_file_upload | author_config_check | author_remove_folder> -- exploit vulnerable installations by checking RPC querying, service listing and file uploading", dest="exploit")
     exploit.add_option("-i","--services", type="choice", choices=['serv','services'], help="SERVICES = <serv | services> -- checking exposed services !", dest="services")
+
+    authentication.add_option("-a","--auth-type", type="choice", choices=['ntlm'], help="AUTHENTICATION = <ntlm> -- Authenticate with NTLM user/pass !", dest="authentication")
+
     general.add_option("-x","--examples", type="string",help="running usage examples !", dest="examples")
 
     parser.add_option_group(front_page)
     parser.add_option_group(share_point)
     parser.add_option_group(mandatory)
     parser.add_option_group(exploit)
+    parser.add_option_group(authentication)
     parser.add_option_group(general)
 
     options, arguments = parser.parse_args()
 
     try:
         target = options.url
+
+        # devalias.net - Authentication
+        if options.authentication == "ntlm":
+            enable_ntlm_authentication("", "", target) # Leave user/pass blank to prompt user
+            # TODO: Enable commandline user/pass?
+
         if target is not None:
             target_information(target)
         else:
