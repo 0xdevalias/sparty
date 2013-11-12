@@ -739,28 +739,29 @@ def main():
             print "[+] check help (-h) for arguments and url specification!"
             sys.exit(0)
 
-
     except ValueError as v:
         print "[-] ValueError occurred. Improper option argument or url!"
         print "[+] check for help (-h) for more details!"
         sys.exit(0)
-
 
     except TypeError as t:
         print "[-] TypeError occcured. Missing option argument or url!"
         print "[+] check for help (-h) for more details!"
         sys.exit(0)
 
-
     except IndexError as e:
         sparty_usage()
         sys.exit(0)
 
-    except urllib2.URLError as u:
-        print "[-] URLError : %s" %u.code
+    except urllib2.HTTPError as h:
+        print "[-] HTTPError : %s" %h.code
         print "[+] please specify the target with protocol handlers as http | https"
         sys.exit(0)
 
+    except urllib2.URLError as u:
+        print "[-] URLError : %s" %u.args
+        print "[+] please specify the target with protocol handlers as http | https"
+        sys.exit(0)
 
     except KeyboardInterrupt:
         print "[-] halt signal detected, exiting the program !\n"
